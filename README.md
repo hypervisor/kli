@@ -9,7 +9,7 @@ KLI_FN(KeBugCheck)(XBOX_360_SYSTEM_CRASH); // -> Same as KeBugCheck(XBOX_360_SYS
 ```
 
 # How it works
-The macro ``KLI_FN`` hashes the name of desired function in compiletime, and in runtime it will enumerate the Export Address Table (EAT) of ntoskrnl.exe.
+The macro ``KLI_FN`` hashes the name of desired function in compiletime (using fnv1a64), and in runtime it will enumerate the Export Address Table (EAT) of ntoskrnl.exe to compare against this hash.
 To get the kernel base, it uses SIDT to find ``nt!KiDivideErrorFault`` ISR, and abuses the fact that ntoskrnl.exe is mapped using 2MiB pages to walk downwards until
 a valid PE image is found. To avoid issues with discardable sections, checks are ran on the PE image to make sure it's ntoskrnl (otherwise you risk finding random drivers).
 
