@@ -169,42 +169,42 @@ namespace kli {
 		{
 			struct
 			{
-				unsigned __int64 low64;
-				unsigned __int64 high64;
+				uint64_t low64;
+				uint64_t high64;
 			} split;
 
 			struct
 			{
-				unsigned __int16 offset_low;
+				uint16_t offset_low;
 
 				union
 				{
-					unsigned __int16 flags;
+					uint16_t flags;
 
 					struct
 					{
-						unsigned __int16 rpl : 2;
-						unsigned __int16 table : 1;
-						unsigned __int16 index : 13;
+						uint16_t rpl : 2;
+						uint16_t table : 1;
+						uint16_t index : 13;
 					};
 				} segment_selector;
-				unsigned __int8 reserved0;
+				uint8_t reserved0;
 				union
 				{
-					unsigned __int8 flags;
+					uint8_t flags;
 
 					struct
 					{
-						unsigned __int8 gate_type : 4;
-						unsigned __int8 storage_segment : 1;
-						unsigned __int8 dpl : 2;
-						unsigned __int8 present : 1;
+						uint8_t gate_type : 4;
+						uint8_t storage_segment : 1;
+						uint8_t dpl : 2;
+						uint8_t present : 1;
 					};
 				} type_attr;
 
-				unsigned __int16 offset_mid;
-				unsigned __int32 offset_high;
-				unsigned __int32 reserved1;
+				uint16_t offset_mid;
+				uint32_t offset_high;
+				uint32_t reserved1;
 			};
 		};
 
@@ -334,18 +334,7 @@ namespace kli {
 			//
 			const auto export_directory = (PIMAGE_EXPORT_DIRECTORY)(addr + nt_headers->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
 			const auto dll_name = (const char *)(addr + export_directory->Name);
-
-			//
-			// We are not guaranteed that this is null-terminated (even though it should be) so
-			// to prevent crashing in hashing string, let's copy to a temporary buffer
-			// and add a null terminator.
-			//
-			char temporary_name[32] = { };
-			for (size_t i = 0; i < 31; ++i) {
-				temporary_name[i] = dll_name[i];
-			}
-
-			const auto dll_name_hash = KLI_HASH_RTS(temporary_name);
+			const auto dll_name_hash = KLI_HASH_RTS(dll_name);
 
 			if (dll_name_hash != KLI_HASH_STR("ntoskrnl.exe"))
 				return false;
