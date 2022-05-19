@@ -5,7 +5,8 @@ Simple kernel-mode alternative to [lazy_importer](https://github.com/JustasMasiu
 # Example
 
 ```cpp
-KLI_FN(KeBugCheck)(XBOX_360_SYSTEM_CRASH); // -> Same as KeBugCheck(XBOX_360_SYSTEM_CRASH);
+KLI_FN(KeBugCheck)(XBOX_360_SYSTEM_CRASH); // Same as KeBugCheck(XBOX_360_SYSTEM_CRASH);
+KLI_FN(ExAllocatePoolWithTag)(NonPagedPool, PAGE_SIZE, 'enoN'); // Same as ExAllocatePoolWithTag(NonPagedPool, PAGE_SIZE, 'enoN');
 ```
 
 # How it works
