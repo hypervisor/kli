@@ -417,4 +417,4 @@ namespace kli {
 	}
 }
 
-#define KLI_FN(name) ((decltype(&##name))(::kli::find_kernel_export_cached(KLI_HASH_STR(#name))))
+#define KLI_FN(name) ((decltype(&##name))(::kli::find_kernel_export_cached<KLI_HASH_STR(#name)>()))
