@@ -374,7 +374,8 @@ namespace kli {
 		}
 	}
 
-	KLI_FORCEINLINE uintptr_t find_kernel_export(uint64_t export_hash)
+	template <uint64_t ExportHash>
+	KLI_FORCEINLINE uintptr_t find_kernel_export()
 	{
 		if (!cache::kernel_base)
 			cache::kernel_base = detail::find_kernel_base();
@@ -397,13 +398,23 @@ namespace kli {
 			// address_of_functions is indexed through an ordinal
 			// address_of_name_ordinals gets the ordinal through our own index - i.
 			//
-			if (export_entry_hash == export_hash)
+			if (export_entry_hash == ExportHash)
 				return cache::kernel_base + address_of_functions[address_of_name_ordinals[i]];
 		}
 
 		__debugbreak();
 		return { };
 	}
+
+	template <uint64_t ExportHash>
+	KLI_FORCEINLINE uintptr_t find_kernel_export_cached()
+	{
+		static uintptr_t address = 0;
+		if (!address)
+			address = find_kernel_export<ExportHash>();
+
+		return address;
+	}
 }
 
-#define KLI_FN(name) ((decltype(&##name))(::kli::find_kernel_export(KLI_HASH_STR(#name))))
+#define KLI_FN(name) ((decltype(&##name))(::kli::find_kernel_export_cached(KLI_HASH_STR(#name))))
