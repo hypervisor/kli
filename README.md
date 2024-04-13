@@ -1,16 +1,19 @@
 # kli
 
-Simple kernel-mode alternative to [lazy_importer](https://github.com/JustasMasiulis/lazy_importer).
+Simple header only, kernel-mode alternative to [lazy_importer](https://github.com/JustasMasiulis/lazy_importer).
 
 # Example
 
 ```cpp
-KLI_FN(KeBugCheck)(XBOX_360_SYSTEM_CRASH); // Same as KeBugCheck(XBOX_360_SYSTEM_CRASH);
-KLI_FN(ExAllocatePoolWithTag)(NonPagedPool, PAGE_SIZE, 'enoN'); // Same as ExAllocatePoolWithTag(NonPagedPool, PAGE_SIZE, 'enoN');
+// Same as KeBugCheck(XBOX_360_SYSTEM_CRASH);
+KLI_FN(KeBugCheck)(XBOX_360_SYSTEM_CRASH);
+
+// Same as ExAllocatePoolWithTag(NonPagedPool, PAGE_SIZE, 'enoN');
+KLI_FN(ExAllocatePoolWithTag)(NonPagedPool, PAGE_SIZE, 'enoN');
 ```
 
 # How it works
-The macro ``KLI_FN`` hashes the name of desired function in compiletime (using fnv1a64), and in runtime it will enumerate the Export Address Table (EAT) of ntoskrnl.exe to compare against this hash.
+The macro ``KLI_FN`` hashes the name of desired function in compiletime (using fnv1a64), and in runtime it will enumerate the Export Address Table (EAT) of `ntoskrnl.exe` to compare against this hash.
 To get the kernel base, it uses the SIDT instruction to find the ``nt!KiDivideErrorFault`` Interrupt Service Routine (ISR), and abuses the fact that ntoskrnl.exe is mapped using 2MiB pages to walk downwards until
 a valid PE image is found. To avoid issues with discardable sections, checks are ran on the PE image to make sure it's ntoskrnl (otherwise you risk finding random drivers).
 
